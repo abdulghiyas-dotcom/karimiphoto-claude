@@ -90,14 +90,24 @@
   }
 
   .nav-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-family: var(--display);
-    font-size: clamp(22px,3vw,28px);
+    font-size: clamp(20px,2.3vw,26px);
     font-weight: 500;
-    letter-spacing: .04em;
+    letter-spacing: .03em;
     color: var(--white);
     text-decoration: none;
     transition: color .3s;
   }
+  .nav-logo img {
+    width: 36px; height: 36px; border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,.45);
+    box-shadow: 0 4px 14px rgba(0,0,0,.2);
+  }
+  #nav.scrolled .nav-logo img { border-color: var(--border); }
   #nav.scrolled .nav-logo { color: var(--ink); }
 
   .nav-links {
@@ -958,8 +968,14 @@
     gap: 48px; margin-bottom: 48px;
   }
   .footer-brand {
+    display: inline-flex; align-items: center; gap: 12px;
     font-family: var(--display); font-size: 32px; font-weight: 300;
     color: var(--white); margin-bottom: 16px;
+  }
+  .footer-brand img {
+    width: 42px; height: 42px; border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,.3);
   }
   .footer-tagline {
     font-size: 13px; color: rgba(255,255,255,.4); line-height: 1.7;
@@ -1076,7 +1092,10 @@
 
 <!-- ═══════════════ NAV ═══════════════ -->
 <nav id="nav">
-  <a href="#hero" class="nav-logo">PixelMilan</a>
+  <a href="#hero" class="nav-logo">
+    <img src="images/logo.jpg" alt="PixelMilan logo">
+    <span>PixelMilan</span>
+  </a>
 
   <ul class="nav-links">
     <li><a href="#packages"><span class="en">Packages</span><span class="it">Pacchetti</span></a></li>
@@ -2066,7 +2085,10 @@
 <footer>
   <div class="footer-top">
     <div>
-      <div class="footer-brand">PixelMilan</div>
+      <div class="footer-brand">
+        <img src="images/logo.jpg" alt="PixelMilan logo">
+        <span>PixelMilan</span>
+      </div>
       <p class="footer-tagline en">Professional photography tours in the heart of Milan. Turning moments into timeless memories, one frame at a time.</p>
       <p class="footer-tagline it">Tour fotografici professionali nel cuore di Milano. Trasformiamo i momenti in ricordi senza tempo, un fotogramma alla volta.</p>
       <div class="footer-social">
