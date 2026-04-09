@@ -2228,16 +2228,23 @@ async function loadInstagramFeed() {
     `).join('');
   };
 
-  try {
-    const profileUrl = encodeURIComponent('https://www.instagram.com/pixelmilan/?__a=1&__d=dis');
-    const response = await fetch(`https://api.allorigins.win/raw?url=${profileUrl}`);
-    const data = await response.json();
-    const edges = data?.graphql?.user?.edge_owner_to_timeline_media?.edges || [];
+  const INSTAGRAM_ACCESS_TOKEN = window.INSTAGRAM_ACCESS_TOKEN || '';
+  if (!INSTAGRAM_ACCESS_TOKEN) {
+    renderItems(fallbackItems.map(src => ({ thumbnail: src, permalink: 'https://www.instagram.com/pixelmilan/' })));
+    status.textContent = 'Add INSTAGRAM_ACCESS_TOKEN to load live latest posts. Showing recent portfolio images for now.';
+    return;
+  }
 
-    const posts = edges.slice(0, 6).map(edge => ({
-      thumbnail: edge?.node?.display_url,
-      permalink: `https://www.instagram.com/p/${edge?.node?.shortcode}/`
-    })).filter(item => item.thumbnail && item.permalink);
+  try {
+    const endpoint = `https://graph.instagram.com/me/media?fields=id,media_type,media_url,thumbnail_url,permalink,timestamp&limit=6&access_token=${encodeURIComponent(INSTAGRAM_ACCESS_TOKEN)}`;
+    const response = await fetch(endpoint);
+    const data = await response.json();
+    const posts = (data?.data || []).filter(item =>
+      item?.permalink && (item?.media_url || item?.thumbnail_url)
+    ).slice(0, 6).map(item => ({
+      thumbnail: item.thumbnail_url || item.media_url,
+      permalink: item.permalink
+    }));
 
     if (posts.length) {
       renderItems(posts);
