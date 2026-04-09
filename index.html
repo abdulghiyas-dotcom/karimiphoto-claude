@@ -667,6 +667,36 @@
     text-transform: uppercase;
   }
 
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(10,9,8,.92);
+    display: flex; align-items: center; justify-content: center;
+    padding: clamp(16px,4vw,42px);
+    z-index: 1200;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .lightbox.open { opacity: 1; pointer-events: auto; }
+  .lightbox-image {
+    max-width: min(96vw,1400px);
+    max-height: 88vh;
+    width: auto; height: auto;
+    border-radius: 3px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.45);
+  }
+  .lightbox-close {
+    position: absolute; top: 22px; right: 24px;
+    width: 42px; height: 42px;
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(26,22,18,.35);
+    color: var(--white);
+    border-radius: 50%;
+    font-size: 26px; line-height: 1;
+    display: grid; place-items: center;
+    cursor: pointer;
+  }
+  .lightbox-close:hover { border-color: var(--gold); color: var(--gold-light); }
+
   /* Milan landmark silhouettes using CSS */
   .duomo-sil {
     position: absolute; bottom: 0; left: 50%;
@@ -1565,36 +1595,41 @@
   </div>
 
   <div class="gallery-grid">
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/door.jpg">
       <div class="g-bg g1"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Duomo · Couple</span><span class="gallery-tag it">Duomo · Coppia</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/eye.jpg">
       <div class="g-bg g2"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Galleria · Solo</span><span class="gallery-tag it">Galleria · Solo</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/girl.jpg">
       <div class="g-bg g3"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Brera · Portrait</span><span class="gallery-tag it">Brera · Ritratto</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/Karimi.jpg">
       <div class="g-bg g4"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Navigli · Golden Hour</span><span class="gallery-tag it">Navigli · Ora Dorata</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/red8.jpg">
       <div class="g-bg g5"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Sempione · Lifestyle</span><span class="gallery-tag it">Sempione · Lifestyle</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/IMG_0573.jpg">
       <div class="g-bg g6"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Duomo · Proposal</span><span class="gallery-tag it">Duomo · Proposta</span></div>
     </div>
-    <div class="gallery-item">
+    <div class="gallery-item" data-full-image="images/IMG_1345.heic">
       <div class="g-bg g7"></div>
       <div class="gallery-overlay"><span class="gallery-tag en">Galleria · Fashion</span><span class="gallery-tag it">Galleria · Moda</span></div>
     </div>
   </div>
 </section>
+
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image preview">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close image preview">×</button>
+  <img class="lightbox-image" id="lightbox-image" src="" alt="Selected gallery image">
+</div>
 
 <!-- ═══════════════ TESTIMONIALS ═══════════════ -->
 <section id="testimonials">
@@ -2161,6 +2196,36 @@ document.querySelectorAll('a,button,.gallery-item,.insta-item,.package-card').fo
     ring.style.width = '40px'; ring.style.height = '40px';
     ring.style.opacity = '0.6';
   });
+});
+
+/* ── Gallery lightbox ── */
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightbox-image');
+const lightboxClose = document.getElementById('lightbox-close');
+function openLightbox(src) {
+  lightboxImage.src = src;
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden', 'true');
+  lightboxImage.src = '';
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.gallery-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const fullImage = item.getAttribute('data-full-image');
+    if (fullImage) openLightbox(fullImage);
+  });
+});
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
 });
 
 /* ── Sticky nav ── */
