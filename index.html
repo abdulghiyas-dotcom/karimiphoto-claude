@@ -1993,6 +1993,8 @@
     <div class="form-subtitle it">Confermeremo entro 2 ore 🤍</div>
 
     <form class="form-grid" onsubmit="handleBooking(event)">
+      <input type="hidden" name="_subject" value="New PixelMilan Booking Request">
+      <input type="hidden" name="_captcha" value="false">
       <div class="form-group form-full">
         <label class="en">Name</label>
         <label class="it">Nome</label>
@@ -2366,41 +2368,42 @@ function closeMobile() {
 }
 
 /* ── Booking form ── */
-function handleBooking(e) {
+async function handleBooking(e) {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const name = formData.get('name') || '';
-  const email = formData.get('email') || '';
-  const shootDate = formData.get('shootDate') || '';
-  const shootTime = formData.get('shootTime') || '';
-  const people = formData.get('people') || '';
-  const pkg = formData.get('package') || '';
-  const locations = formData.get('locations') || 'N/A';
-  const notes = formData.get('notes') || 'N/A';
-  const subject = encodeURIComponent(`New Photoshoot Booking Request - ${name}`);
-  const body = encodeURIComponent(
-`New booking request details:
-
-Name: ${name}
-Email: ${email}
-Shoot Date: ${shootDate}
-Shoot Time: ${shootTime}
-Number of People: ${people}
-Package: ${pkg}
-Preferred Locations: ${locations}
-Special Requests/Notes: ${notes}`
-  );
-  window.location.href = `mailto:abdul.ghiyas@gmail.com?subject=${subject}&body=${body}`;
-
-  const btn = e.target.querySelector('.form-submit');
+  const form = e.target;
+  const formData = new FormData(form);
+  const btn = form.querySelector('.form-submit');
   const isIt = document.body.classList.contains('lang-it');
-  btn.textContent = isIt ? '✓ Richiesta Inviata! Ti contatteremo presto.' : '✓ Request Sent! We\'ll be in touch soon.';
-  btn.style.background = '#5a8a6a';
-  setTimeout(() => {
-    btn.textContent = isIt ? '✦ Conferma Richiesta di Prenotazione' : '✦ Confirm Booking Request';
-    btn.style.background = '';
-    e.target.reset();
-  }, 5000);
+
+  btn.disabled = true;
+  btn.textContent = isIt ? 'Invio in corso...' : 'Sending...';
+
+  try {
+    const response = await fetch('https://formsubmit.co/ajax/abdul.ghiyas@gmail.com', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: formData
+    });
+
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    btn.textContent = isIt ? '✓ Richiesta Inviata! Ti contatteremo presto.' : '✓ Request Sent! We\'ll be in touch soon.';
+    btn.style.background = '#5a8a6a';
+    setTimeout(() => {
+      btn.textContent = isIt ? '✦ Conferma Richiesta di Prenotazione' : '✦ Confirm Booking Request';
+      btn.style.background = '';
+      btn.disabled = false;
+      form.reset();
+    }, 5000);
+  } catch (error) {
+    btn.textContent = isIt ? '⚠ Errore invio. Riprova.' : '⚠ Submission failed. Please retry.';
+    btn.style.background = '#a85c5c';
+    setTimeout(() => {
+      btn.textContent = isIt ? '✦ Conferma Richiesta di Prenotazione' : '✦ Confirm Booking Request';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 5000);
+  }
 }
 
 /* ── Smooth anchor for mobile ── */
