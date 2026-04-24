@@ -31,6 +31,7 @@
 
     --nav-h: 72px;
     --section-pad: clamp(80px,10vw,140px);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23000000' fill-opacity='.10'%3E%3Ccircle cx='12' cy='16' r='1'/%3E%3Ccircle cx='56' cy='22' r='1'/%3E%3Ccircle cx='103' cy='18' r='1'/%3E%3Ccircle cx='26' cy='66' r='1'/%3E%3Ccircle cx='78' cy='80' r='1'/%3E%3Ccircle cx='120' cy='70' r='1'/%3E%3Ccircle cx='42' cy='112' r='1'/%3E%3Ccircle cx='96' cy='124' r='1'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +39,7 @@
 
   body {
     font-family: var(--body);
-    background: var(--cream);
+    background: radial-gradient(circle at top, #fffaf3, var(--cream) 45%, #f1e8dd 100%);
     color: var(--ink);
     overflow-x: hidden;
     cursor: none;
@@ -196,6 +197,25 @@
     display: flex; align-items: center; justify-content: center;
   }
 
+  #hero::before,
+  #hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  #hero::before {
+    background: radial-gradient(circle at 20% 20%, rgba(200,169,110,.22), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,.08), transparent 45%);
+    mix-blend-mode: screen;
+  }
+  #hero::after {
+    background-image: var(--grain);
+    opacity: .2;
+    animation: grainDrift 8s steps(10) infinite;
+  }
+
   .hero-slides { position: absolute; inset: 0; }
   .hero-slide {
     position: absolute; inset: 0;
@@ -220,8 +240,12 @@
   .hero-content {
     position: relative; z-index: 2;
     text-align: center;
-    padding: 0 20px;
+    padding: clamp(24px,3vw,36px);
     max-width: 860px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: linear-gradient(140deg, rgba(10,10,10,.28), rgba(26,22,18,.55));
+    backdrop-filter: blur(8px);
+    box-shadow: 0 35px 90px rgba(0,0,0,.28);
   }
 
   .hero-eyebrow {
@@ -300,6 +324,26 @@
     transform: translateY(-2px);
   }
 
+
+  .hero-tags {
+    margin-top: 28px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .8s var(--ease) 1.2s forwards;
+  }
+  .hero-tag {
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,.32);
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.92);
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
   .hero-dots {
     position: absolute; bottom: 40px; left: 50%;
     transform: translateX(-50%);
@@ -449,6 +493,58 @@
   }
   .pillar-text { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
 
+
+  /* ═══════════════════════════════════════════
+     CREATIVE STRIP
+  ═══════════════════════════════════════════ */
+  #creative-strip {
+    background: linear-gradient(180deg, #fff, #f8efe4 55%, #f2e4d3);
+    position: relative;
+  }
+  .creative-track {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 18px;
+  }
+  .creative-card {
+    background: linear-gradient(180deg, #fff, #fffdf9);
+    border: 1px solid rgba(160,120,64,.28);
+    padding: 14px 14px 20px;
+    box-shadow: 0 18px 40px rgba(26,22,18,.08);
+    transform: rotate(var(--tilt));
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s;
+  }
+  .creative-card:hover {
+    transform: rotate(0deg) translateY(-8px) scale(1.015);
+    box-shadow: 0 28px 60px rgba(26,22,18,.16);
+    border-color: var(--gold-dark);
+  }
+  .creative-photo {
+    aspect-ratio: 4/5;
+    margin-bottom: 12px;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .creative-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,.2));
+  }
+  .creative-note {
+    font-family: var(--display);
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .creative-sub {
+    font-size: 11px;
+    letter-spacing: .14em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
   /* ═══════════════════════════════════════════
      PACKAGES
   ═══════════════════════════════════════════ */
@@ -633,10 +729,14 @@
   .gallery-item {
     position: relative; overflow: hidden; border-radius: 2px;
     cursor: pointer;
+    border: 8px solid rgba(255,255,255,.95);
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
   }
-  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
-  .gallery-item:nth-child(4) { grid-column: span 2; }
-  .gallery-item:nth-child(7) { grid-column: span 2; }
+  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; transform: rotate(-.8deg); }
+  .gallery-item:nth-child(2) { transform: rotate(.6deg); }
+  .gallery-item:nth-child(3) { transform: rotate(-.5deg); }
+  .gallery-item:nth-child(4) { grid-column: span 2; transform: rotate(.5deg); }
+  .gallery-item:nth-child(7) { grid-column: span 2; transform: rotate(-.4deg); }
 
   .g-bg {
     width: 100%; height: 100%;
@@ -1073,6 +1173,11 @@
     0% { background-position: -200% center; }
     100% { background-position: 200% center; }
   }
+  @keyframes grainDrift {
+    0%,100% { transform: translate(0,0); }
+    30% { transform: translate(-2%, 2%); }
+    60% { transform: translate(2%, -2%); }
+  }
 
   /* ═══════════════════════════════════════════
      LANDMARK ICON ART
@@ -1092,6 +1197,7 @@
     .how-grid { grid-template-columns: repeat(2,1fr); }
     .footer-top { grid-template-columns: 1fr 1fr; }
     .gallery-grid { grid-template-rows: repeat(4,160px); }
+    .creative-track { grid-template-columns: repeat(2,1fr); }
   }
   @media (max-width: 900px) {
     #intro, #about, #booking, #contact {
@@ -1118,6 +1224,9 @@
   }
   @media (max-width: 640px) {
     .nav-links { display: none; }
+    #cursor, #cursor-ring { display: none; }
+    .hero-content { padding: 20px 16px; }
+    .creative-track { grid-template-columns: 1fr; }
     .hamburger { display: flex; }
     .nav-cta { display: none; }
     .mobile-menu { display: flex; }
@@ -1203,6 +1312,11 @@
         <span class="en">View Packages</span>
         <span class="it">Scopri i Pacchetti</span>
       </a>
+    </div>
+    <div class="hero-tags">
+      <span class="hero-tag">Editorial Color Grading</span>
+      <span class="hero-tag">Pose Coaching Included</span>
+      <span class="hero-tag">24h Sneak Peek Delivery</span>
     </div>
   </div>
 
@@ -1298,6 +1412,21 @@
         <p class="pillar-text it">Nessuna rigidità — rendiamo la fotografia un'esperienza naturale.</p>
       </div>
     </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════ CREATIVE STRIP ═══════════════ -->
+<section id="creative-strip">
+  <span class="section-label reveal"><span class="en">Visual Direction</span><span class="it">Direzione Visiva</span></span>
+  <h2 class="section-title reveal reveal-d1"><span class="en">A more <em>editorial</em> and artistic mood.</span><span class="it">Un mood più <em>editoriale</em> e artistico.</span></h2>
+  <div class="divider reveal reveal-d2"></div>
+  <p class="section-body reveal reveal-d2"><span class="en">We crafted a bolder visual identity inspired by contact sheets, film grain, and handcrafted compositions to make the website feel like a photographer's portfolio.</span><span class="it">Abbiamo creato un'identità visiva più audace ispirata a contact sheet, grana analogica e composizioni artigianali.</span></p>
+  <div class="creative-track">
+    <article class="creative-card reveal" style="--tilt:-2deg"><div class="creative-photo g1"></div><h3 class="creative-note">Golden Hour</h3><p class="creative-sub">Duomo Light Study</p></article>
+    <article class="creative-card reveal reveal-d1" style="--tilt:1.5deg"><div class="creative-photo g3"></div><h3 class="creative-note">City Motion</h3><p class="creative-sub">Street Story Frame</p></article>
+    <article class="creative-card reveal reveal-d2" style="--tilt:-1deg"><div class="creative-photo g6"></div><h3 class="creative-note">Portrait Poetry</h3><p class="creative-sub">Editorial Touch</p></article>
+    <article class="creative-card reveal reveal-d3" style="--tilt:2deg"><div class="creative-photo g8"></div><h3 class="creative-note">Night Contrast</h3><p class="creative-sub">Navigli Palette</p></article>
   </div>
 </section>
 
