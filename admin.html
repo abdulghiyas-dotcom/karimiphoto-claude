@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelMilan – Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #C8A96E; --gold-dk: #A07840;
+      --ink: #1A1612; --bg: #201710; --card: #2A1E16;
+      --border: rgba(200,169,110,.18); --muted: rgba(250,247,242,.45);
+      --green: #5a8a6a; --red: #a85c5c;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: #faf7f2; min-height: 100vh; }
+
+    /* ── Inputs ── */
+    input, select, textarea {
+      width: 100%; background: rgba(250,247,242,.06);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: #faf7f2; padding: 10px 14px;
+      font-family: 'Jost', sans-serif; font-size: 14px;
+      outline: none; transition: border-color .2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+    select option { background: var(--card); }
+    label {
+      display: block; font-size: 11px; font-weight: 500;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .fg { margin-bottom: 14px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 20px; border-radius: 6px; border: none;
+      font-family: 'Jost', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all .2s; text-decoration: none;
+    }
+    .btn-gold { background: var(--gold); color: var(--ink); }
+    .btn-gold:hover { background: var(--gold-dk); }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--gold); }
+    .btn-ghost:hover { background: rgba(200,169,110,.1); }
+    .btn-danger { background: rgba(168,92,92,.2); border: 1px solid rgba(168,92,92,.3); color: #c87c7c; }
+    .btn-danger:hover { background: rgba(168,92,92,.35); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-full { width: 100%; }
+
+    /* ── Overlay screens ── */
+    .screen {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 200; overflow-y: auto; padding: 24px;
+    }
+    .screen-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 40px; width: 100%; max-width: 460px;
+    }
+    .screen-title { font-size: 22px; font-weight: 600; color: var(--gold); margin-bottom: 6px; }
+    .screen-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+    .help-box {
+      background: rgba(200,169,110,.06); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px; font-size: 12px; color: var(--muted);
+      line-height: 1.8; margin-bottom: 20px;
+    }
+    .help-box code {
+      background: rgba(200,169,110,.15); padding: 1px 6px;
+      border-radius: 3px; color: var(--gold); font-size: 11px;
+    }
+
+    /* ── Alerts ── */
+    .alert {
+      padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 14px;
+    }
+    .alert-ok  { background: rgba(90,138,106,.2); border: 1px solid rgba(90,138,106,.3); color: #7ab890; }
+    .alert-err { background: rgba(168,92,92,.2);  border: 1px solid rgba(168,92,92,.3);  color: #c87c7c; }
+    .alert-info{ background: rgba(200,169,110,.1); border: 1px solid var(--border); color: var(--gold); }
+
+    /* ── Nav ── */
+    #admin-nav {
+      background: #1A1209; border-bottom: 1px solid var(--border);
+      padding: 0 24px; display: flex; align-items: center; gap: 0;
+      height: 54px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 15px; font-weight: 600; color: var(--gold); margin-right: auto; }
+    .tab-btn {
+      padding: 18px 14px; background: transparent; border: none;
+      border-bottom: 2px solid transparent; color: var(--muted);
+      font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: color .2s, border-color .2s; white-space: nowrap;
+    }
+    .tab-btn:hover { color: rgba(250,247,242,.8); }
+    .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .logout-btn {
+      margin-left: 16px; padding: 5px 12px;
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted);
+      font-family: 'Jost', sans-serif; font-size: 12px; cursor: pointer;
+    }
+    .logout-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .fb-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-left: 12px;
+    }
+    .fb-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .fb-ok  { background: rgba(90,138,106,.25); color: #7ab890; }
+    .fb-ok  .fb-dot { background: #7ab890; }
+    .fb-err { background: rgba(168,92,92,.25); color: #c87c7c; }
+    .fb-err .fb-dot { background: #c87c7c; }
+
+    /* ── Main ── */
+    .admin-main { padding: 28px 24px; max-width: 1140px; margin: 0 auto; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .page-title { font-size: 20px; font-weight: 600; margin-bottom: 22px; color: rgba(250,247,242,.9); }
+    .page-title span { color: var(--gold); }
+
+    /* ── Stats ── */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px 20px;
+    }
+    .stat-val { font-size: 26px; font-weight: 600; color: var(--gold); }
+    .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Calendar ── */
+    .cal-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+    .cal-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+    }
+    .cal-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .cal-month-lbl { font-size: 17px; font-weight: 500; color: var(--gold); }
+    .cal-nav { display: flex; gap: 8px; }
+    .cal-nav button {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(200,169,110,.1); border: 1px solid var(--border);
+      color: var(--gold); font-size: 14px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .cal-nav button:hover { background: rgba(200,169,110,.2); }
+    .cal-wdays {
+      display: grid; grid-template-columns: repeat(7,1fr);
+      text-align: center; font-size: 10px; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(250,247,242,.25); margin-bottom: 6px;
+    }
+    .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      border-radius: 7px; font-size: 13px; cursor: pointer; position: relative;
+      transition: background .15s;
+    }
+    .cal-day:hover:not(.empty):not(.past) { background: rgba(200,169,110,.12); }
+    .cal-day.empty, .cal-day.past { cursor: default; color: rgba(250,247,242,.18); }
+    .cal-day.today { font-weight: 700; color: var(--gold); }
+    .cal-day.has-slots { background: rgba(200,169,110,.15); color: var(--gold); font-weight: 600; }
+    .cal-day.has-slots:hover { background: rgba(200,169,110,.28); }
+    .cal-day.selected { background: var(--gold) !important; color: var(--ink) !important; font-weight: 700; }
+    .cal-day.has-slots::after {
+      content: ''; position: absolute; bottom: 3px; left: 50%;
+      transform: translateX(-50%); width: 4px; height: 4px;
+      border-radius: 50%; background: currentColor;
+    }
+    .cal-day.selected::after { display: none; }
+
+    /* ── Slot panel ── */
+    .slot-panel-title { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 16px; }
+    .slot-item {
+      background: rgba(250,247,242,.04); border: 1px solid var(--border);
+      border-radius: 7px; padding: 11px 13px; margin-bottom: 7px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+    }
+    .slot-time { font-weight: 600; color: var(--gold); font-size: 15px; }
+    .slot-det { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.5; }
+    .slot-del {
+      background: transparent; border: 1px solid rgba(168,92,92,.3);
+      border-radius: 5px; color: #a85c5c; padding: 3px 8px;
+      font-size: 11px; cursor: pointer; flex-shrink: 0;
+    }
+    .slot-del:hover { background: rgba(168,92,92,.12); }
+    .empty-state { text-align: center; color: rgba(250,247,242,.25); font-size: 13px; padding: 16px 0; }
+    .add-slot-divider { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 6px; }
+    .add-slot-ttl { font-size: 13px; font-weight: 500; color: rgba(250,247,242,.6); margin-bottom: 12px; }
+    .svc-check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: rgba(250,247,242,.7);
+      text-transform: none; letter-spacing: 0; cursor: pointer;
+    }
+    .svc-check input { width: auto; accent-color: var(--gold); }
+    #svc-checkboxes { display: flex; flex-direction: column; gap: 7px; }
+
+    /* ── Bookings table ── */
+    .tbl-wrap {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      text-align: left; padding: 10px 14px;
+      background: rgba(200,169,110,.06); color: var(--muted);
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+    tbody td { padding: 11px 14px; border-bottom: 1px solid rgba(200,169,110,.06); }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(200,169,110,.04); }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .badge-pending    { background: rgba(200,169,110,.18); color: var(--gold); }
+    .badge-paid       { background: rgba(90,138,106,.22); color: #7ab890; }
+    .badge-confirmed  { background: rgba(90,138,106,.32); color: #4a8a6a; }
+    .badge-cancelled  { background: rgba(168,92,92,.18);  color: #c87c7c; }
+
+    /* ── Services config ── */
+    .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .svc-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .svc-card-name { font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 14px; }
+    .svc-base-price {
+      font-size: 11px; color: var(--muted); margin-bottom: 10px;
+      padding: 6px 10px; background: rgba(200,169,110,.06);
+      border-radius: 5px; border: 1px solid var(--border);
+    }
+
+    /* ── Settings ── */
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .settings-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+    }
+    .settings-card h3 { font-size: 15px; color: var(--gold); margin-bottom: 18px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .cal-layout, .svc-grid, .settings-grid, .stats-row { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      #admin-nav { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ SETUP SCREEN ══════════════ -->
+<div class="screen" id="setup-screen" style="display:none;">
+  <div class="screen-box">
+    <div class="screen-title">⚙️ Firebase Setup</div>
+    <div class="screen-sub">Connect your Firebase project to power the booking calendar.</div>
+    <div class="help-box">
+      <strong>How to get your config:</strong><br>
+      1. Go to <code>console.firebase.google.com</code><br>
+      2. Create a project → Add a <strong>Web App</strong><br>
+      3. Project Settings → Your apps → Config object<br>
+      4. Also create a <strong>Firestore Database</strong> in test mode
+    </div>
+    <div class="fg"><label>API Key</label><input type="text" id="s-apiKey" placeholder="AIzaSy..."></div>
+    <div class="fg"><label>Auth Domain</label><input type="text" id="s-authDomain" placeholder="your-project.firebaseapp.com"></div>
+    <div class="fg"><label>Project ID</label><input type="text" id="s-projectId" placeholder="your-project-id"></div>
+    <div class="fg"><label>App ID</label><input type="text" id="s-appId" placeholder="1:123456:web:abc123"></div>
+    <div class="fg"><label>Admin Password (choose one)</label><input type="password" id="s-password" placeholder="Min 6 characters"></div>
+    <div id="s-err" class="alert alert-err" style="display:none;"></div>
+    <button class="btn btn-gold btn-full" onclick="saveSetup()">Save & Connect</button>
+  </div>
+</div>
+
+<!-- ══════════════ LOGIN SCREEN ══════════════ -->
+<div class="screen" id="login-screen">
+  <div class="screen-box">
+    <div class="screen-title" style="text-align:center;">✦ PixelMilan</div>
+    <div class="screen-sub" style="text-align:center;">Admin Panel</div>
+    <div class="fg"><label>Password</label>
+      <input type="password" id="login-pw" placeholder="Admin password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="login-err" class="alert alert-err" style="display:none;"></div>
+    <button class="btn btn-gold btn-full" onclick="doLogin()">Sign In</button>
+    <p style="text-align:center;margin-top:14px;font-size:12px;color:var(--muted);">
+      First time? <a href="#" onclick="showSetup();return false;" style="color:var(--gold);">Configure Firebase</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════ ADMIN PANEL ══════════════ -->
+<div id="admin-panel" style="display:none;">
+  <nav id="admin-nav">
+    <span class="nav-logo">✦ PixelMilan</span>
+    <button class="tab-btn active" onclick="showTab('calendar',this)">📅 Calendar</button>
+    <button class="tab-btn" onclick="showTab('bookings',this)">📋 Bookings</button>
+    <button class="tab-btn" onclick="showTab('services',this)">💳 Stripe & Prices</button>
+    <button class="tab-btn" onclick="showTab('settings',this)">⚙️ Settings</button>
+    <span id="fb-badge" class="fb-badge fb-err"><span class="fb-dot"></span>Connecting…</span>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </nav>
+
+  <div class="admin-main">
+
+    <!-- ── CALENDAR ── -->
+    <div class="tab-pane active" id="tab-calendar">
+      <div class="page-title">Availability <span>Calendar</span></div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val" id="st-upcoming">—</div><div class="stat-lbl">Upcoming slots</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-today">—</div><div class="stat-lbl">Today's bookings</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-pending">—</div><div class="stat-lbl">Pending payment</div></div>
+        <div class="stat-card"><div class="stat-val" id="st-revenue">—</div><div class="stat-lbl">Revenue (paid)</div></div>
+      </div>
+
+      <div class="cal-layout">
+        <div class="cal-card">
+          <div class="cal-hdr">
+            <div class="cal-month-lbl" id="cal-month-lbl">—</div>
+            <div class="cal-nav">
+              <button onclick="prevMonth()">‹</button>
+              <button onclick="nextMonth()">›</button>
+            </div>
+          </div>
+          <div class="cal-wdays">
+            <span>Mon</span><span>Tue</span><span>Wed</span>
+            <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+
+        <div class="cal-card">
+          <div class="slot-panel-title" id="slot-panel-title">Select a date to manage slots</div>
+          <div id="slot-list"><div class="empty-state">Click any date</div></div>
+
+          <div class="add-slot-divider" id="add-slot-form" style="display:none;">
+            <div class="add-slot-ttl">＋ Add Time Slot</div>
+            <div class="fg"><label>Time</label><input type="time" id="ns-time" value="10:00"></div>
+            <div class="fg">
+              <label>Services Available</label>
+              <div id="svc-checkboxes"></div>
+            </div>
+            <div class="row2">
+              <div class="fg"><label>Max People</label><input type="number" id="ns-cap" value="4" min="1" max="20"></div>
+              <div class="fg"><label>Price Override (€)</label><input type="number" id="ns-price" placeholder="Default"></div>
+            </div>
+            <button class="btn btn-gold btn-full" onclick="addSlot()">Add Slot</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BOOKINGS ── -->
+    <div class="tab-pane" id="tab-bookings">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="page-title" style="margin:0;">All <span>Bookings</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="loadBookings()">↻ Refresh</button>
+      </div>
+      <div id="bk-alert" style="display:none;"></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th><th>Customer</th><th>Service</th>
+              <th>People</th><th>Total</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="bk-tbody">
+            <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:36px;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── SERVICES & STRIPE ── -->
+    <div class="tab-pane" id="tab-services">
+      <div class="page-title">Stripe Payment Links & <span>Prices</span></div>
+      <div id="svc-alert" style="display:none;"></div>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:22px;line-height:1.7;">
+        Create Payment Links in your <strong style="color:var(--gold);">Stripe Dashboard → Payment Links</strong>,
+        then paste the URLs below. For quote-based services, leave the URL empty — customers will be
+        directed to contact you instead.
+      </p>
+      <div class="svc-grid" id="svc-config-grid"></div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-gold" onclick="saveStripeConfig()">Save All Stripe Links</button>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tab-pane" id="tab-settings">
+      <div class="page-title">Admin <span>Settings</span></div>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h3>Change Password</h3>
+          <div class="fg"><label>Current Password</label><input type="password" id="pw-cur"></div>
+          <div class="fg"><label>New Password</label><input type="password" id="pw-new"></div>
+          <div class="fg"><label>Confirm Password</label><input type="password" id="pw-cfm"></div>
+          <div id="pw-alert" style="display:none;" class="alert"></div>
+          <button class="btn btn-gold" onclick="changePassword()">Update Password</button>
+        </div>
+        <div class="settings-card">
+          <h3>Firebase Connection</h3>
+          <div id="fb-settings-status" style="margin-bottom:14px;"></div>
+          <button class="btn btn-ghost" onclick="showSetup()">Re-configure Firebase</button>
+          <div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+              <strong style="color:rgba(250,247,242,.6);">Refund Policy</strong><br>
+              48+ hours before: 100% refund<br>
+              24–48 hours before: 50% refund<br>
+              Under 24 hours: No refund
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getFirestore, collection, doc,
+  addDoc, setDoc, getDoc, getDocs, deleteDoc, updateDoc,
+  query, orderBy, serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Service catalogue ──────────────────────────────────
+const SERVICES = {
+  'group-tour':    { name: '👥 Group Photography Tour',           min: 2, max: 3  },
+  'private-shoot': { name: '🌟 Private Milan Shoot',              min: 1, max: 2  },
+  'classic-group': { name: '💫 Classic Group Milan Experience',   min: 1, max: 4  },
+  'model':         { name: '💃 Model Photography Experience',     min: 1, max: 1  },
+  'couple-shoot':  { name: '💍 Romantic Couple / Proposal Shoot', min: 2, max: 2  },
+  'milan-icon':    { name: '👑 The Milan Icon Experience',        min: 1, max: 10 },
+  'milan-lifestyle':{ name: '🎬 The Milan Lifestyle Experience',  min: 1, max: 10 },
+};
+
+const PRICE_POINTS = [
+  { id: 'group-tour-2',      label: '👥 Group Tour (2 people)',        base: '€69.98' },
+  { id: 'group-tour-3',      label: '👥 Group Tour (3 people)',        base: '€104.97' },
+  { id: 'private-shoot-1',   label: '🌟 Private Shoot (1 person)',     base: '€79' },
+  { id: 'private-shoot-2',   label: '🌟 Private Shoot (2 people)',     base: '€139' },
+  { id: 'classic-group',     label: '💫 Classic Group Experience',     base: '€219' },
+  { id: 'model',             label: '💃 Model Photography',            base: '€149' },
+  { id: 'couple-shoot',      label: '💍 Romantic / Proposal Shoot',    base: '€269' },
+  { id: 'milan-icon',        label: '👑 Milan Icon Experience',        base: 'Quote' },
+  { id: 'milan-lifestyle',   label: '🎬 Milan Lifestyle Experience',   base: 'Quote' },
+];
+
+// ── State ──────────────────────────────────────────────
+let db = null, fbOk = false;
+let calDate = new Date();
+let selectedDate = null;
+let allSlots = {};   // { dateStr: [{id, time, serviceIds, maxCapacity, bookedPeople, priceOverride}] }
+let stripeLinks = {};
+
+// ── Firebase init ──────────────────────────────────────
+async function initFb() {
+  const cfg = getCfg();
+  if (!cfg) { showSetup(); return; }
+  try {
+    const app = initializeApp(cfg);
+    db = getFirestore(app);
+    fbOk = true;
+    setFbBadge(true);
+    await Promise.all([loadSlots(), loadStripeLinks()]);
+    await loadStats();
+  } catch (e) {
+    console.error('Firebase error:', e);
+    setFbBadge(false);
+  }
+}
+
+function getCfg() {
+  const raw = localStorage.getItem('pm-fb-cfg');
+  return raw ? JSON.parse(raw) : null;
+}
+
+function setFbBadge(ok) {
+  const el = document.getElementById('fb-badge');
+  el.className = 'fb-badge ' + (ok ? 'fb-ok' : 'fb-err');
+  el.innerHTML = `<span class="fb-dot"></span>${ok ? 'Firebase OK' : 'Firebase Error'}`;
+  document.getElementById('fb-settings-status').innerHTML =
+    `<div class="alert ${ok ? 'alert-ok' : 'alert-err'}">${ok ? '✓ Connected to Firebase' : '⚠ Firebase not connected'}</div>`;
+}
+
+// ── Auth ───────────────────────────────────────────────
+function doLogin() {
+  const pw = document.getElementById('login-pw').value;
+  const stored = localStorage.getItem('pm-admin-pw') || 'admin123';
+  if (pw === stored) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    document.getElementById('login-err').style.display = 'none';
+    initFb();
+  } else {
+    const e = document.getElementById('login-err');
+    e.textContent = 'Incorrect password'; e.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pw').value = '';
+}
+
+function showSetup() {
+  const cfg = getCfg() || {};
+  document.getElementById('s-apiKey').value     = cfg.apiKey     || '';
+  document.getElementById('s-authDomain').value = cfg.authDomain || '';
+  document.getElementById('s-projectId').value  = cfg.projectId  || '';
+  document.getElementById('s-appId').value      = cfg.appId      || '';
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'none';
+}
+
+function saveSetup() {
+  const apiKey     = document.getElementById('s-apiKey').value.trim();
+  const authDomain = document.getElementById('s-authDomain').value.trim();
+  const projectId  = document.getElementById('s-projectId').value.trim();
+  const appId      = document.getElementById('s-appId').value.trim();
+  const pw         = document.getElementById('s-password').value;
+  const errEl      = document.getElementById('s-err');
+
+  if (!apiKey || !authDomain || !projectId || !appId) {
+    errEl.textContent = 'Please fill in all Firebase fields.'; errEl.style.display = 'block'; return;
+  }
+  localStorage.setItem('pm-fb-cfg', JSON.stringify({ apiKey, authDomain, projectId, appId }));
+  if (pw && pw.length >= 6) localStorage.setItem('pm-admin-pw', pw);
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ── Tabs ───────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'bookings') loadBookings();
+  if (name === 'services') renderServiceConfig();
+}
+
+// ── Calendar ───────────────────────────────────────────
+async function loadSlots() {
+  if (!db) return;
+  const snap = await getDocs(collection(db, 'slots'));
+  allSlots = {};
+  snap.forEach(d => {
+    const data = { id: d.id, ...d.data() };
+    if (!allSlots[data.date]) allSlots[data.date] = [];
+    allSlots[data.date].push(data);
+  });
+  renderCal();
+}
+
+function renderCal() {
+  const grid  = document.getElementById('cal-grid');
+  const label = document.getElementById('cal-month-lbl');
+  const MONTHS = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  const y = calDate.getFullYear(), m = calDate.getMonth();
+  label.textContent = `${MONTHS[m]} ${y}`;
+
+  const firstDow = new Date(y, m, 1).getDay();
+  const offset = firstDow === 0 ? 6 : firstDow - 1;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+  const todayStr = fmtDate(today);
+
+  let html = Array(offset).fill('<div class="cal-day empty"></div>').join('');
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${y}-${pad(m+1)}-${pad(d)}`;
+    const isPast = ds < todayStr;
+    const isToday = ds === todayStr;
+    const hasSl = !!(allSlots[ds]?.length);
+    const isSel = ds === selectedDate;
+
+    let cls = 'cal-day';
+    if (isPast) cls += ' past';
+    else if (isSel) cls += ' selected';
+    else if (hasSl) cls += ' has-slots';
+    if (isToday && !isSel) cls += ' today';
+
+    const click = (!isPast) ? `onclick="selectDate('${ds}')"` : '';
+    html += `<div class="${cls}" ${click}>${d}</div>`;
+  }
+  grid.innerHTML = html;
+
+  document.getElementById('st-upcoming').textContent =
+    Object.keys(allSlots).filter(d => d >= todayStr).reduce((s,d) => s + allSlots[d].length, 0);
+}
+
+function prevMonth() { calDate = new Date(calDate.getFullYear(), calDate.getMonth()-1, 1); renderCal(); }
+function nextMonth() { calDate = new Date(calDate.getFullYear(), calDate.getMonth()+1, 1); renderCal(); }
+
+function selectDate(ds) {
+  selectedDate = ds;
+  renderCal();
+  renderSlotPanel(ds);
+}
+
+function renderSlotPanel(ds) {
+  const title = document.getElementById('slot-panel-title');
+  const list  = document.getElementById('slot-list');
+  const form  = document.getElementById('add-slot-form');
+
+  const [y,m,d] = ds.split('-');
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  title.textContent = `${MONTHS[+m-1]} ${+d}, ${y}`;
+
+  const slots = (allSlots[ds] || []).slice().sort((a,b) => a.time.localeCompare(b.time));
+
+  if (!slots.length) {
+    list.innerHTML = '<div class="empty-state">No slots — add one below</div>';
+  } else {
+    list.innerHTML = slots.map(sl => {
+      const svcs = (sl.serviceIds || []).map(id => SERVICES[id]?.name || id).join('<br>');
+      const booked = sl.bookedPeople || 0;
+      const cap = sl.maxCapacity || '—';
+      return `<div class="slot-item">
+        <div>
+          <div class="slot-time">${sl.time}</div>
+          <div class="slot-det">${svcs || 'All services'}</div>
+          <div class="slot-det">${booked}/${cap} booked${sl.priceOverride ? ' · €'+sl.priceOverride : ''}</div>
+        </div>
+        <button class="slot-del" onclick="deleteSlot('${sl.id}','${ds}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Service checkboxes
+  document.getElementById('svc-checkboxes').innerHTML = Object.entries(SERVICES).map(([id,s]) => `
+    <label class="svc-check">
+      <input type="checkbox" value="${id}" checked>
+      ${s.name}
+    </label>
+  `).join('');
+
+  form.style.display = 'block';
+}
+
+async function addSlot() {
+  if (!db || !selectedDate) return;
+  const time     = document.getElementById('ns-time').value;
+  const cap      = parseInt(document.getElementById('ns-cap').value) || 4;
+  const priceOv  = document.getElementById('ns-price').value;
+  const svcIds   = [...document.querySelectorAll('#svc-checkboxes input:checked')].map(i => i.value);
+
+  if (!time) { alert('Please enter a time.'); return; }
+
+  const data = {
+    date: selectedDate, time, serviceIds: svcIds,
+    maxCapacity: cap, bookedPeople: 0, available: true, createdAt: serverTimestamp()
+  };
+  if (priceOv) data.priceOverride = parseFloat(priceOv);
+
+  const ref = await addDoc(collection(db, 'slots'), data);
+  if (!allSlots[selectedDate]) allSlots[selectedDate] = [];
+  allSlots[selectedDate].push({ id: ref.id, ...data });
+  document.getElementById('ns-time').value  = '';
+  document.getElementById('ns-price').value = '';
+  renderCal();
+  renderSlotPanel(selectedDate);
+}
+
+async function deleteSlot(slotId, ds) {
+  if (!confirm('Delete this slot?')) return;
+  await deleteDoc(doc(db, 'slots', slotId));
+  allSlots[ds] = (allSlots[ds] || []).filter(s => s.id !== slotId);
+  if (!allSlots[ds].length) delete allSlots[ds];
+  renderCal();
+  renderSlotPanel(ds);
+}
+
+// ── Bookings ───────────────────────────────────────────
+async function loadBookings() {
+  if (!db) return;
+  const tbody = document.getElementById('bk-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">Loading…</td></tr>';
+  try {
+    const snap = await getDocs(query(collection(db, 'bookings'), orderBy('createdAt', 'desc')));
+    if (snap.empty) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:36px;">No bookings yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    let pending = 0, revenue = 0, todayBk = 0;
+    const todayStr = fmtDate(new Date());
+    snap.forEach(d => {
+      const b = { id: d.id, ...d.data() };
+      const svcName = SERVICES[b.serviceId]?.name || b.serviceId || '—';
+      const bc = { pending_payment:'pending', paid:'paid', confirmed:'confirmed', cancelled:'cancelled' }[b.status] || 'pending';
+      if (b.status === 'pending_payment') pending++;
+      if (b.status === 'paid' || b.status === 'confirmed') revenue += (b.totalPrice || 0);
+      if (b.date === todayStr) todayBk++;
+      tbody.innerHTML += `<tr>
+        <td><strong>${b.date||'—'}</strong><br><span style="color:var(--muted);font-size:11px;">${b.time||'—'}</span></td>
+        <td><strong>${b.name||'—'}</strong><br><a href="mailto:${b.email}" style="color:var(--gold);font-size:11px;">${b.email||'—'}</a></td>
+        <td style="font-size:12px;">${svcName}</td>
+        <td>${b.people||'—'}</td>
+        <td><strong>€${b.totalPrice||'?'}</strong></td>
+        <td><span class="badge badge-${bc}">${b.status||'pending'}</span></td>
+        <td>
+          <select style="width:auto;padding:4px 8px;font-size:11px;" onchange="updStatus('${b.id}',this.value)">
+            <option ${b.status==='pending_payment'?'selected':''} value="pending_payment">Pending</option>
+            <option ${b.status==='paid'?'selected':''} value="paid">Paid</option>
+            <option ${b.status==='confirmed'?'selected':''} value="confirmed">Confirmed</option>
+            <option ${b.status==='cancelled'?'selected':''} value="cancelled">Cancelled</option>
+          </select>
+        </td>
+      </tr>`;
+    });
+    document.getElementById('st-pending').textContent = pending;
+    document.getElementById('st-revenue').textContent = '€' + revenue.toFixed(0);
+    document.getElementById('st-today').textContent = todayBk;
+  } catch (e) {
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#c87c7c;padding:30px;">Error loading. Check Firestore rules.</td></tr>';
+  }
+}
+
+async function updStatus(id, status) {
+  if (!db) return;
+  await updateDoc(doc(db, 'bookings', id), { status });
+}
+
+// ── Stripe config ──────────────────────────────────────
+async function loadStripeLinks() {
+  if (!db) return;
+  try {
+    const d = await getDoc(doc(db, 'config', 'stripeLinks'));
+    if (d.exists()) stripeLinks = d.data();
+  } catch(e) { console.error(e); }
+}
+
+function renderServiceConfig() {
+  const grid = document.getElementById('svc-config-grid');
+  grid.innerHTML = PRICE_POINTS.map(pp => `
+    <div class="svc-card">
+      <div class="svc-card-name">${pp.label}</div>
+      <div class="svc-base-price">Default price: ${pp.base}</div>
+      <div class="fg">
+        <label>Stripe Payment Link URL</label>
+        <input type="url" id="sl-${pp.id}" value="${stripeLinks[pp.id]||''}" placeholder="https://buy.stripe.com/…">
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveStripeConfig() {
+  if (!db) { alert('Firebase not connected'); return; }
+  const links = {};
+  PRICE_POINTS.forEach(pp => {
+    const val = document.getElementById('sl-'+pp.id)?.value.trim();
+    if (val) links[pp.id] = val;
+  });
+  try {
+    await setDoc(doc(db, 'config', 'stripeLinks'), links);
+    stripeLinks = links;
+    const el = document.getElementById('svc-alert');
+    el.className = 'alert alert-ok'; el.textContent = '✓ Stripe links saved!'; el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  } catch(e) {
+    const el = document.getElementById('svc-alert');
+    el.className = 'alert alert-err'; el.textContent = '⚠ Error saving. Check Firestore rules.'; el.style.display = 'block';
+  }
+}
+
+// ── Stats ──────────────────────────────────────────────
+async function loadStats() {
+  await loadBookings();
+}
+
+// ── Settings ───────────────────────────────────────────
+function changePassword() {
+  const cur = document.getElementById('pw-cur').value;
+  const nw  = document.getElementById('pw-new').value;
+  const cfm = document.getElementById('pw-cfm').value;
+  const stored = localStorage.getItem('pm-admin-pw') || 'admin123';
+  const el = document.getElementById('pw-alert');
+  el.style.display = 'block';
+  if (cur !== stored)   { el.className = 'alert alert-err'; el.textContent = 'Current password incorrect'; return; }
+  if (nw.length < 6)    { el.className = 'alert alert-err'; el.textContent = 'New password must be 6+ chars'; return; }
+  if (nw !== cfm)       { el.className = 'alert alert-err'; el.textContent = 'Passwords do not match'; return; }
+  localStorage.setItem('pm-admin-pw', nw);
+  el.className = 'alert alert-ok'; el.textContent = '✓ Password updated';
+  ['pw-cur','pw-new','pw-cfm'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ── Helpers ────────────────────────────────────────────
+function fmtDate(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function pad(n) { return String(n).padStart(2,'0'); }
+
+// ── Expose globals ─────────────────────────────────────
+window.doLogin = doLogin; window.doLogout = doLogout;
+window.showSetup = showSetup; window.saveSetup = saveSetup;
+window.showTab = showTab;
+window.prevMonth = prevMonth; window.nextMonth = nextMonth;
+window.selectDate = selectDate; window.addSlot = addSlot; window.deleteSlot = deleteSlot;
+window.loadBookings = loadBookings; window.updStatus = updStatus;
+window.saveStripeConfig = saveStripeConfig; window.renderServiceConfig = renderServiceConfig;
+window.changePassword = changePassword;
+
+// ── Boot ───────────────────────────────────────────────
+if (!getCfg()) {
+  document.getElementById('login-screen').style.display = 'none';
+  showSetup();
+}
+</script>
+</body>
+</html>

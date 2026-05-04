@@ -928,6 +928,45 @@
     margin-top: 14px;
   }
 
+  /* ── People counter ── */
+  .people-counter {
+    display: flex; align-items: center;
+    border: 1px solid var(--border); border-radius: var(--r);
+    overflow: hidden; background: var(--cream); height: 46px;
+  }
+  .people-counter button {
+    width: 46px; height: 100%; background: transparent; border: none;
+    font-size: 20px; color: var(--ink); cursor: pointer; flex-shrink: 0;
+    transition: background .15s;
+  }
+  .people-counter button:hover:not(:disabled) { background: var(--blush); }
+  .people-counter button:disabled { color: var(--border); cursor: default; }
+  .ppl-num {
+    flex: 1; text-align: center; font-size: 16px; font-weight: 500;
+    color: var(--ink); border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border); line-height: 46px;
+  }
+  .form-helper { font-size: 11px; color: var(--ink-soft); margin-top: 5px; }
+
+  /* ── Price display ── */
+  .price-box {
+    background: linear-gradient(135deg, rgba(200,169,110,.09), rgba(200,169,110,.03));
+    border: 1px solid rgba(200,169,110,.3); border-radius: var(--r);
+    padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .price-box-lbl {
+    font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 500;
+  }
+  .price-box-amt {
+    font-family: var(--display); font-size: 26px; font-weight: 500; color: var(--ink);
+    margin-left: auto;
+  }
+  .price-box-note { font-size: 12px; color: var(--ink-soft); width: 100%; }
+
+  /* ── Slot select ── */
+  .slot-loading { text-align: center; padding: 10px 0; color: var(--ink-soft); font-size: 13px; }
+
   /* ═══════════════════════════════════════════
      INSTAGRAM STRIP
   ═══════════════════════════════════════════ */
@@ -1355,8 +1394,8 @@
             <li><span class="en">Guided walking photography experience</span><span class="it">Esperienza fotografica guidata a piedi</span></li>
             <li><span class="en">Affordable shared social tour format</span><span class="it">Formato tour condiviso e accessibile</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('group-tour',2)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('group-tour',2)">Prenota Questo Pacchetto</a>
         </div>
       </div>
 
@@ -1380,8 +1419,8 @@
             <li><span class="en">Delivery in 48 hours</span><span class="it">Consegna in 48 ore</span></li>
             <li><span class="en">2 people: €139</span><span class="it">2 persone: €139</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('private-shoot',1)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('private-shoot',1)">Prenota Questo Pacchetto</a>
         </div>
       </div>
 
@@ -1407,8 +1446,8 @@
             <li><span class="en">Basic retouching (color, light, skin)</span><span class="it">Ritocco base (colore, luce, pelle)</span></li>
             <li><span class="en">Delivery in 48 hours</span><span class="it">Consegna in 48 ore</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('classic-group',1)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('classic-group',1)">Prenota Questo Pacchetto</a>
         </div>
       </div>
 
@@ -1432,8 +1471,8 @@
             <li><span class="en">Guided model poses &amp; direction</span><span class="it">Pose da modella guidate e direzione</span></li>
             <li><span class="en">Choose between studio or our selected outdoor locations</span><span class="it">Scegli tra studio o le nostre location outdoor selezionate</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('model',1)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('model',1)">Prenota Questo Pacchetto</a>
         </div>
       </div>
 
@@ -1456,8 +1495,8 @@
           <ul class="pkg-includes">
             <li><span class="en">Planning support for surprise proposal</span><span class="it">Supporto pianificazione proposta a sorpresa</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('couple-shoot',2)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('couple-shoot',2)">Prenota Questo Pacchetto</a>
         </div>
       </div>
     </div><!-- /standard -->
@@ -1500,8 +1539,8 @@
             <li><span class="en">Professional posing + direction</span><span class="it">Posing professionale + direzione</span></li>
             <li><span class="en">Coffee break at a luxury café</span><span class="it">Pausa caffè in un locale di lusso</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta en">Book This Package</a>
-          <a href="#booking" class="pkg-cta it">Prenota Questo Pacchetto</a>
+          <a href="#booking" class="pkg-cta en" onclick="selectPackage('milan-icon',1)">Book This Package</a>
+          <a href="#booking" class="pkg-cta it" onclick="selectPackage('milan-icon',1)">Prenota Questo Pacchetto</a>
         </div>
       </div>
 
@@ -1538,7 +1577,7 @@
             <li style="border-bottom-color:rgba(255,255,255,.08);color:rgba(255,255,255,.75)"><span class="en">1 cinematic reel (Instagram / TikTok ready)</span><span class="it">1 reel cinematografico (pronto per Instagram / TikTok)</span></li>
             <li style="color:rgba(255,255,255,.75)"><span class="en">Natural direction + candid storytelling (no stiff posing)</span><span class="it">Direzione naturale + storytelling spontaneo (senza pose rigide)</span></li>
           </ul>
-          <a href="#booking" class="pkg-cta" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));">
+          <a href="#booking" class="pkg-cta" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark));" onclick="selectPackage('milan-lifestyle',1)">
             <span class="en">Book the Full Experience</span>
             <span class="it">Prenota l'Esperienza Completa</span>
           </a>
@@ -2002,71 +2041,96 @@
     <div class="form-subtitle en">We'll confirm within 2 hours 🤍</div>
     <div class="form-subtitle it">Confermeremo entro 2 ore 🤍</div>
 
-    <form class="form-grid" onsubmit="handleBooking(event)">
+    <form class="form-grid" id="booking-form" onsubmit="handleBooking(event)">
       <input type="hidden" name="_subject" value="New PixelMilan Booking Request">
       <input type="hidden" name="_captcha" value="false">
-      <div class="form-group form-full">
-        <label class="en">Name</label>
-        <label class="it">Nome</label>
-        <input type="text" name="name" placeholder="Sophie Williams" required>
-      </div>
-      <div class="form-group form-full">
-        <label>Email</label>
-        <input type="email" name="email" placeholder="sophie@example.com" required>
-      </div>
-      <div class="form-group">
-        <label class="en">Shoot Date</label>
-        <label class="it">Data Shooting</label>
-        <input type="date" name="shootDate" required>
-      </div>
-      <div class="form-group">
-        <label class="en">Shoot Time</label>
-        <label class="it">Orario Shooting</label>
-        <input type="time" name="shootTime" required>
-      </div>
-      <div class="form-group">
-        <label class="en">Number of People</label>
-        <label class="it">Numero di Persone</label>
-        <select name="people">
-          <option>1 person</option>
-          <option>2 people</option>
-          <option>3 people</option>
-          <option>4 people</option>
-          <option>5+ people</option>
-        </select>
-      </div>
+
+      <!-- Service -->
       <div class="form-group form-full">
         <label class="en">Choose Package</label>
         <label class="it">Scegli il Pacchetto</label>
-        <select name="package">
-          <option>Group Photography Tour – €34.99 / person (min 2, max 3)</option>
-          <option>Essential Milan Shoot – €79</option>
-          <option>Essential Milan Shoot (2 people) – €139</option>
-          <option>Classic Group Milan Experience – €219</option>
-          <option>Model Photography Experience – €149</option>
-          <option>Romantic / Proposal Shoot – €269</option>
-          <option>The Milan Icon Experience – Price on request</option>
-          <option>The Milan Lifestyle Experience – Price based on quote</option>
+        <select id="bk-service" name="package" onchange="onServiceChange()">
+          <option value="group-tour">👥 Group Photography Tour – €34.99/person (2–3 people)</option>
+          <option value="private-shoot">🌟 Private Milan Shoot – €79 · 2 people €139</option>
+          <option value="classic-group" selected>💫 Classic Group Milan Experience – €219</option>
+          <option value="model">💃 Model Photography Experience – €149</option>
+          <option value="couple-shoot">💍 Romantic Couple / Proposal Shoot – €269</option>
+          <option value="milan-icon">👑 The Milan Icon Experience – Price on request</option>
+          <option value="milan-lifestyle">🎬 The Milan Lifestyle Experience – Price on request</option>
         </select>
       </div>
+
+      <!-- People counter -->
       <div class="form-group form-full">
-        <label class="en">Preferred Locations (optional)</label>
-        <label class="it">Location Preferite (opzionale)</label>
-        <input type="text" name="locations" placeholder="e.g. Duomo, Navigli, Brera...">
+        <label class="en">Number of People</label>
+        <label class="it">Numero di Persone</label>
+        <div class="people-counter">
+          <button type="button" id="ppl-minus" onclick="changePeople(-1)">−</button>
+          <div class="ppl-num" id="ppl-num">1</div>
+          <button type="button" id="ppl-plus" onclick="changePeople(1)">+</button>
+        </div>
+        <input type="hidden" name="people" id="bk-people" value="1">
+        <div class="form-helper" id="ppl-hint">Min 1 – Max 4 people</div>
       </div>
+
+      <!-- Price display -->
+      <div class="form-full" id="price-display">
+        <div class="price-box">
+          <span class="price-box-lbl en">Total Price</span>
+          <span class="price-box-lbl it">Prezzo Totale</span>
+          <span class="price-box-amt" id="price-amt">€219</span>
+          <span class="price-box-note" id="price-note"></span>
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div class="form-group form-full">
+        <label class="en">Shoot Date</label>
+        <label class="it">Data Shooting</label>
+        <div id="date-loading" class="slot-loading" style="display:none;">Loading available dates…</div>
+        <select id="bk-date-select" name="shootDate" onchange="onDateChange()" style="display:none;">
+          <option value="">Select an available date…</option>
+        </select>
+        <input type="date" id="bk-date-input" name="shootDate" required>
+      </div>
+
+      <!-- Time -->
+      <div class="form-group form-full">
+        <label class="en">Shoot Time</label>
+        <label class="it">Orario Shooting</label>
+        <select id="bk-time-select" name="shootTime" style="display:none;">
+          <option value="">Select date first…</option>
+        </select>
+        <input type="time" id="bk-time-input" name="shootTime" required>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group form-full">
+        <label class="en">Your Name</label>
+        <label class="it">Nome</label>
+        <input type="text" name="name" placeholder="Sophie Williams" required>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group form-full">
+        <label>Email</label>
+        <input type="email" name="email" id="bk-email" placeholder="sophie@example.com" required>
+      </div>
+
+      <!-- Notes -->
       <div class="form-group form-full">
         <label class="en">Special Requests or Notes</label>
         <label class="it">Richieste Speciali o Note</label>
-        <textarea name="notes" placeholder="Anniversary, proposal, specific style... tell us everything!"></textarea>
+        <textarea name="notes" placeholder="Anniversary, proposal, specific style… tell us everything!"></textarea>
       </div>
 
       <div class="form-full">
-        <button type="submit" class="form-submit">
-          <span class="en">✦ Confirm Booking Request</span>
-          <span class="it">✦ Conferma Richiesta di Prenotazione</span>
+        <button type="submit" class="form-submit" id="book-btn">
+          <span class="en" id="book-btn-text-en">✦ Book &amp; Pay Securely</span>
+          <span class="it" id="book-btn-text-it">✦ Prenota e Paga in Sicurezza</span>
         </button>
-        <p class="form-note en">🔒 Secure checkout via Stripe · PayPal also accepted</p>
-        <p class="form-note it">🔒 Checkout sicuro tramite Stripe · Accettiamo anche PayPal</p>
+        <p class="form-note en">🔒 Secure checkout via Stripe</p>
+        <p class="form-note it">🔒 Checkout sicuro tramite Stripe</p>
       </div>
     </form>
   </div>
@@ -2381,44 +2445,9 @@ function closeMobile() {
   setTimeout(() => { mobileMenu.style.opacity = '0'; setTimeout(() => { mobileMenu.classList.remove('open'); }, 400); }, 0);
 }
 
-/* ── Booking form ── */
-async function handleBooking(e) {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-  const btn = form.querySelector('.form-submit');
-  const isIt = document.body.classList.contains('lang-it');
-
-  btn.disabled = true;
-  btn.textContent = isIt ? 'Invio in corso...' : 'Sending...';
-
-  try {
-    const response = await fetch('https://formsubmit.co/ajax/abdul.ghiyas@gmail.com', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json' },
-      body: formData
-    });
-
-    if (!response.ok) throw new Error('Network response was not ok');
-
-    btn.textContent = isIt ? '✓ Richiesta Inviata! Ti contatteremo presto.' : '✓ Request Sent! We\'ll be in touch soon.';
-    btn.style.background = '#5a8a6a';
-    setTimeout(() => {
-      btn.textContent = isIt ? '✦ Conferma Richiesta di Prenotazione' : '✦ Confirm Booking Request';
-      btn.style.background = '';
-      btn.disabled = false;
-      form.reset();
-    }, 5000);
-  } catch (error) {
-    btn.textContent = isIt ? '⚠ Errore invio. Riprova.' : '⚠ Submission failed. Please retry.';
-    btn.style.background = '#a85c5c';
-    setTimeout(() => {
-      btn.textContent = isIt ? '✦ Conferma Richiesta di Prenotazione' : '✦ Confirm Booking Request';
-      btn.style.background = '';
-      btn.disabled = false;
-    }, 5000);
-  }
-}
+/* ── Booking form (handled by Firebase module below) ── */
+/* handleBooking, selectPackage, onServiceChange, changePeople, onDateChange
+   are defined in the <script type="module"> block after this script. */
 
 /* ── Smooth anchor for mobile ── */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -2433,6 +2462,349 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 /* ── Initial mobile menu display fix ── */
 mobileMenu.style.display = 'flex';
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  FIREBASE CONFIGURATION
+  ─────────────────────────────────────────────────────────────────
+  1. Go to https://console.firebase.google.com
+  2. Create a project → Add a Web App → copy the config values below
+  3. Create a Firestore Database (start in test mode)
+  4. Replace the placeholder values below with your real config
+  ═══════════════════════════════════════════════════════════════ -->
+<script>
+var FIREBASE_CONFIG = {
+  apiKey:     "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
+  projectId:  "REPLACE_WITH_YOUR_PROJECT_ID",
+  appId:      "REPLACE_WITH_YOUR_APP_ID"
+};
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  BOOKING MODULE – Firebase + Stripe + Dynamic Pricing
+  ═══════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getFirestore, collection, doc,
+  addDoc, getDoc, getDocs, updateDoc,
+  query, where, orderBy
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Service catalogue ────────────────────────────────────────────
+const SERVICES = {
+  'group-tour':     { min: 2, max: 3, priceMode: 'per-person', basePrice: 34.99 },
+  'private-shoot':  { min: 1, max: 2, priceMode: 'tiered',     prices: { 1: 79, 2: 139 } },
+  'classic-group':  { min: 1, max: 4, priceMode: 'fixed',      basePrice: 219 },
+  'model':          { min: 1, max: 1, priceMode: 'fixed',       basePrice: 149 },
+  'couple-shoot':   { min: 2, max: 2, priceMode: 'fixed',       basePrice: 269 },
+  'milan-icon':     { min: 1, max: 10, priceMode: 'quote' },
+  'milan-lifestyle':{ min: 1, max: 10, priceMode: 'quote' },
+};
+
+// Stripe key per service + people count
+function stripeKey(serviceId, people) {
+  if (serviceId === 'group-tour')   return `group-tour-${people}`;
+  if (serviceId === 'private-shoot') return `private-shoot-${people}`;
+  return serviceId;
+}
+
+// ── State ─────────────────────────────────────────────────────────
+let db = null, fbReady = false;
+let currentPeople = 1;
+let allSlots = {};     // { dateStr: [slot...] }
+let stripeLinks = {};
+let selectedSlotId = null;
+
+// ── Firebase init ─────────────────────────────────────────────────
+async function initFb() {
+  const cfg = window.FIREBASE_CONFIG;
+  if (!cfg || cfg.apiKey === 'REPLACE_WITH_YOUR_API_KEY') return; // Not configured
+  try {
+    const app = initializeApp(cfg);
+    db = getFirestore(app);
+    fbReady = true;
+    await Promise.all([loadSlots(), loadStripeLinks()]);
+    switchToSlotMode();
+  } catch (e) {
+    console.warn('Firebase booking init failed — using fallback form.', e);
+  }
+}
+
+async function loadSlots() {
+  const snap = await getDocs(collection(db, 'slots'));
+  allSlots = {};
+  snap.forEach(d => {
+    const data = { id: d.id, ...d.data() };
+    if (!allSlots[data.date]) allSlots[data.date] = [];
+    allSlots[data.date].push(data);
+  });
+}
+
+async function loadStripeLinks() {
+  const d = await getDoc(doc(db, 'config', 'stripeLinks'));
+  if (d.exists()) stripeLinks = d.data();
+}
+
+// Switch date/time inputs to slot-based selectors
+function switchToSlotMode() {
+  document.getElementById('bk-date-input').style.display = 'none';
+  document.getElementById('bk-date-input').removeAttribute('required');
+  document.getElementById('bk-time-input').style.display = 'none';
+  document.getElementById('bk-time-input').removeAttribute('required');
+  document.getElementById('bk-date-select').style.display = 'block';
+  document.getElementById('bk-date-select').setAttribute('required', '');
+  document.getElementById('bk-time-select').style.display = 'block';
+  document.getElementById('bk-time-select').setAttribute('required', '');
+  populateDates();
+}
+
+function populateDates() {
+  const svcId = document.getElementById('bk-service').value;
+  const sel = document.getElementById('bk-date-select');
+  const today = new Date().toISOString().split('T')[0];
+
+  const available = Object.keys(allSlots)
+    .filter(ds => ds >= today)
+    .filter(ds => (allSlots[ds] || []).some(sl =>
+      (sl.serviceIds || []).includes(svcId) &&
+      sl.available !== false &&
+      (sl.bookedPeople || 0) < (sl.maxCapacity || 99)
+    ))
+    .sort();
+
+  sel.innerHTML = available.length
+    ? ['<option value="">Select an available date…</option>',
+       ...available.map(ds => `<option value="${ds}">${fmtDateLabel(ds)}</option>`)
+      ].join('')
+    : '<option value="">No available dates — contact us</option>';
+
+  document.getElementById('bk-time-select').innerHTML = '<option value="">Select date first…</option>';
+  selectedSlotId = null;
+}
+
+function onDateChange() {
+  if (!fbReady) return;
+  const ds = document.getElementById('bk-date-select').value;
+  const svcId = document.getElementById('bk-service').value;
+  const timeSel = document.getElementById('bk-time-select');
+  selectedSlotId = null;
+
+  if (!ds) { timeSel.innerHTML = '<option value="">Select date first…</option>'; return; }
+
+  const slots = (allSlots[ds] || []).filter(sl =>
+    (sl.serviceIds || []).includes(svcId) &&
+    sl.available !== false &&
+    (sl.bookedPeople || 0) < (sl.maxCapacity || 99)
+  ).sort((a,b) => a.time.localeCompare(b.time));
+
+  timeSel.innerHTML = slots.length
+    ? ['<option value="">Select time slot…</option>',
+       ...slots.map(sl => {
+         const remaining = (sl.maxCapacity || 99) - (sl.bookedPeople || 0);
+         return `<option value="${sl.id}">${sl.time}  (${remaining} spot${remaining>1?'s':''} left)</option>`;
+       })
+      ].join('')
+    : '<option value="">No time slots for this date</option>';
+}
+
+// ── Pricing ───────────────────────────────────────────────────────
+function calcPrice(svcId, people) {
+  const s = SERVICES[svcId];
+  if (!s || s.priceMode === 'quote') return null;
+  if (s.priceMode === 'per-person') return +(s.basePrice * people).toFixed(2);
+  if (s.priceMode === 'tiered') return s.prices[people] || null;
+  return s.basePrice;
+}
+
+function updatePriceDisplay() {
+  const svcId = document.getElementById('bk-service').value;
+  const s = SERVICES[svcId];
+  const price = calcPrice(svcId, currentPeople);
+  const amtEl = document.getElementById('price-amt');
+  const noteEl = document.getElementById('price-note');
+
+  if (price === null) {
+    amtEl.textContent = 'Price on request';
+    noteEl.textContent = "We'll contact you with a custom quote";
+  } else {
+    amtEl.textContent = '€' + (Number.isInteger(price) ? price : price.toFixed(2));
+    noteEl.textContent = s.priceMode === 'per-person'
+      ? `€${s.basePrice.toFixed(2)} × ${currentPeople} ${currentPeople > 1 ? 'people' : 'person'}`
+      : '';
+  }
+}
+
+function onServiceChange() {
+  const svcId = document.getElementById('bk-service').value;
+  const s = SERVICES[svcId];
+  // Clamp people to service limits
+  currentPeople = Math.max(s.min, Math.min(s.max, currentPeople));
+  syncPeopleUI();
+  updatePriceDisplay();
+  if (fbReady) { populateDates(); }
+}
+
+function changePeople(delta) {
+  const svcId = document.getElementById('bk-service').value;
+  const s = SERVICES[svcId];
+  currentPeople = Math.max(s.min, Math.min(s.max, currentPeople + delta));
+  syncPeopleUI();
+  updatePriceDisplay();
+}
+
+function syncPeopleUI() {
+  const svcId = document.getElementById('bk-service').value;
+  const s = SERVICES[svcId];
+  document.getElementById('ppl-num').textContent = currentPeople;
+  document.getElementById('bk-people').value = currentPeople;
+  document.getElementById('ppl-minus').disabled = currentPeople <= s.min;
+  document.getElementById('ppl-plus').disabled  = currentPeople >= s.max;
+  document.getElementById('ppl-hint').textContent = `Min ${s.min} – Max ${s.max} ${s.max > 1 ? 'people' : 'person'}`;
+}
+
+// ── Booking submission ────────────────────────────────────────────
+async function handleBooking(e) {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('.form-submit');
+  const isIt = document.body.classList.contains('lang-it');
+
+  const svcId  = document.getElementById('bk-service').value;
+  const email  = document.getElementById('bk-email').value.trim();
+  const name   = form.querySelector('[name="name"]').value.trim();
+  const notes  = form.querySelector('[name="notes"]').value.trim();
+  const price  = calcPrice(svcId, currentPeople);
+
+  const date = fbReady
+    ? document.getElementById('bk-date-select').value
+    : document.getElementById('bk-date-input').value;
+  const time = fbReady
+    ? (document.getElementById('bk-time-select').selectedOptions[0]?.text?.split(' ')[0] || '')
+    : document.getElementById('bk-time-input').value;
+
+  btn.disabled = true;
+  btn.style.opacity = '.7';
+  document.getElementById('book-btn-text-en').textContent = 'Processing…';
+  document.getElementById('book-btn-text-it').textContent = 'Elaborazione…';
+
+  const isQuote = !price;
+
+  // ── Quote services → email via FormSubmit ──────────────────────
+  if (isQuote) {
+    const fd = new FormData(form);
+    fd.append('_subject', 'New PixelMilan Quote Request');
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/abdul.ghiyas@gmail.com', {
+        method: 'POST', headers: { 'Accept': 'application/json' }, body: fd
+      });
+      if (!res.ok) throw new Error();
+      document.getElementById('book-btn-text-en').textContent = '✓ Request Sent! We\'ll be in touch soon.';
+      document.getElementById('book-btn-text-it').textContent = '✓ Richiesta Inviata! Ti contatteremo presto.';
+      btn.style.background = '#5a8a6a'; btn.style.opacity = '1';
+      setTimeout(() => { resetBtn(btn); form.reset(); currentPeople = 1; syncPeopleUI(); updatePriceDisplay(); }, 5000);
+    } catch {
+      document.getElementById('book-btn-text-en').textContent = '⚠ Failed. Please retry.';
+      document.getElementById('book-btn-text-it').textContent = '⚠ Errore. Riprova.';
+      btn.style.background = '#a85c5c'; btn.style.opacity = '1';
+      setTimeout(() => resetBtn(btn), 5000);
+    }
+    return;
+  }
+
+  // ── Priced services → save to Firebase → redirect to Stripe ────
+  const bookingData = {
+    name, email, notes, svcId, serviceId: svcId,
+    people: currentPeople, totalPrice: price,
+    date, time, status: 'pending_payment',
+    createdAt: new Date().toISOString()
+  };
+
+  let bookingId = 'ref-' + Date.now();
+
+  if (fbReady) {
+    try {
+      // Slot id from time select
+      const timeSel = document.getElementById('bk-time-select');
+      if (timeSel.value) {
+        bookingData.slotId = timeSel.value;
+        // Increment booked people on slot
+        await updateDoc(doc(db, 'slots', timeSel.value), {
+          bookedPeople: (allSlots[date]?.find(s => s.id === timeSel.value)?.bookedPeople || 0) + currentPeople
+        });
+      }
+      const ref = await addDoc(collection(db, 'bookings'), bookingData);
+      bookingId = ref.id;
+    } catch (err) {
+      console.warn('Could not save to Firebase:', err);
+    }
+  }
+
+  // Get Stripe link
+  const skKey = stripeKey(svcId, currentPeople);
+  const stripeUrl = stripeLinks[skKey];
+
+  if (stripeUrl) {
+    const url = `${stripeUrl}?prefilled_email=${encodeURIComponent(email)}&client_reference_id=${bookingId}`;
+    window.location.href = url;
+  } else {
+    // No Stripe link configured — fall back to email
+    const fd = new FormData(form);
+    fd.append('_subject', `New PixelMilan Booking – ${svcId} (€${price})`);
+    fd.append('booking_id', bookingId);
+    fd.append('total_price', '€' + price);
+    try {
+      await fetch('https://formsubmit.co/ajax/abdul.ghiyas@gmail.com', {
+        method: 'POST', headers: { 'Accept': 'application/json' }, body: fd
+      });
+    } catch {}
+    document.getElementById('book-btn-text-en').textContent = '✓ Booking Received! Payment link coming via email.';
+    document.getElementById('book-btn-text-it').textContent = '✓ Prenotazione Ricevuta! Link pagamento via email.';
+    btn.style.background = '#5a8a6a'; btn.style.opacity = '1';
+    setTimeout(() => { resetBtn(btn); form.reset(); currentPeople = 1; syncPeopleUI(); updatePriceDisplay(); }, 6000);
+  }
+}
+
+function resetBtn(btn) {
+  btn.disabled = false;
+  btn.style.background = '';
+  btn.style.opacity = '1';
+  document.getElementById('book-btn-text-en').textContent = '✦ Book & Pay Securely';
+  document.getElementById('book-btn-text-it').textContent = '✦ Prenota e Paga in Sicurezza';
+}
+
+// Pre-select package from package card click
+function selectPackage(svcId, people) {
+  const sel = document.getElementById('bk-service');
+  if (sel) { sel.value = svcId; }
+  if (people) currentPeople = people;
+  onServiceChange();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function fmtDateLabel(ds) {
+  const [y,m,d] = ds.split('-');
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dateObj = new Date(+y, +m-1, +d);
+  return `${DAY_NAMES[dateObj.getDay()]} ${MONTHS[+m-1]} ${+d}, ${y}`;
+}
+
+// ── Expose to HTML ────────────────────────────────────────────────
+window.handleBooking   = handleBooking;
+window.selectPackage   = selectPackage;
+window.onServiceChange = onServiceChange;
+window.changePeople    = changePeople;
+window.onDateChange    = onDateChange;
+
+// ── Init ──────────────────────────────────────────────────────────
+// Default state: classic-group, 1 person
+document.getElementById('bk-service').value = 'classic-group';
+currentPeople = 1;
+syncPeopleUI();
+updatePriceDisplay();
+initFb();
 </script>
 </body>
 </html>
